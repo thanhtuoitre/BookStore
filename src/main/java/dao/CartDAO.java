@@ -12,8 +12,8 @@ import model.Cart;
 
 public class CartDAO {
 	private String jdbcURL = "jdbc:mysql://localhost:3306/bookstore?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC";
-	private String jdbcUser = "thanh"; // đổi user của bạn
-	private String jdbcPass = "123456"; // đổi pass của bạn
+	private String jdbcUser = "thanh"; 
+	private String jdbcPass = "123456"; 
 
 	public CartDAO() {
 		try {

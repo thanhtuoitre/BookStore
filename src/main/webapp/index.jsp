@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Bookstore</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
@@ -14,9 +14,8 @@
 	<header>
 		<div class="header-top">
 			<div class="logo">
-				<img
-					src="https://img.freepik.com/premium-vector/book-line-art-logo-icon-vector-white-transparent-background-web-use_1119746-162.jpg"
-					alt="Logo">
+				<img src="${pageContext.request.contextPath}/assets/img/logo.jpg"
+					alt="Logo"> 
 				<div class="logo-text">
 					<h2>Bookstore</h2>
 					<span>ACCESSORIES</span>
@@ -24,9 +23,7 @@
 			</div>
 
 			<div class="logo1">
-				<img
-					src="https://tse2.mm.bing.net/th/id/OIP.0khZCrzBSvpHdgKH3CiJrgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
-					alt="User"> 
+				<img src="${pageContext.request.contextPath}/assets/img/user.jpg" alt="User">
 
 				<!-- Nếu chưa đăng nhập -->
 				<c:if test="${empty sessionScope.user}">
@@ -65,17 +62,25 @@
 		<!-- Sidebar -->
 		<aside>
 			<ul>
-				<li><label><input type="checkbox"> Sách thiếu nhi</label></li>
-				<li><label><input type="checkbox"> Sách ngoại ngữ</label></li>
-				<li><label><input type="checkbox"> Sách kỹ năng sống</label></li>
-				<li><label><input type="checkbox"> Sách nuôi dạy con</label></li>
+				<li><label><input type="checkbox"> Sách thiếu
+						nhi</label></li>
+				<li><label><input type="checkbox"> Sách ngoại
+						ngữ</label></li>
+				<li><label><input type="checkbox"> Sách kỹ năng
+						sống</label></li>
+				<li><label><input type="checkbox"> Sách nuôi
+						dạy con</label></li>
 				<li><label><input type="checkbox"> Sách tin học</label></li>
-				<li><label><input type="checkbox"> Sách kinh tế - xã hội</label></li>
-				<li><label><input type="checkbox"> Sách khoa học - công nghệ</label></li>
+				<li><label><input type="checkbox"> Sách kinh tế
+						- xã hội</label></li>
+				<li><label><input type="checkbox"> Sách khoa
+						học - công nghệ</label></li>
 			</ul>
 
 			<div class="newsletter">
-				<p><b>Đăng ký nhận email</b></p>
+				<p>
+					<b>Đăng ký nhận email</b>
+				</p>
 				<input type="email" placeholder="Nhập email">
 				<button>Gửi</button>
 			</div>
@@ -85,7 +90,7 @@
 			<div class="books">
 				<c:forEach var="b" items="${bookList}">
 					<div class="book">
-						<img src="${b.imagePath}" alt="${b.title}" style="width: 120px; height: 160px;">
+						<img src="${pageContext.request.contextPath}/${b.imagePath}">
 						<h4>${b.title}</h4>
 						<p>Tác giả: ${b.author}</p>
 						<p>Giá: ${b.price} ₫</p>

@@ -5,8 +5,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Đăng nhập - Bookstore</title>
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="login.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/login.css">
 </head>
 <body>
 

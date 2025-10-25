@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Giỏ hàng - Bookstore</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="assets/css/style.css">
 <style>
 .cart-table {
 	width: 100%;
