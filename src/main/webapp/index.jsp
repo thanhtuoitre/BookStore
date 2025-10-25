@@ -45,12 +45,11 @@
 		<!-- Menu -->
 		<nav>
 			<ul>
-				<li><a href="book">Trang chủ</a></li>
-				<li><a href="#">Sách phổ biến</a></li>
-				<li><a href="#">Sách bán chạy</a></li>
-				<li><a href="#">Sách mới</a></li>
-				<li><a href="#">Giá thấp đến cao</a></li>
-				<li><a href="#">Giá cao đến thấp</a></li>
+				<li><a href="book?action=list">Trang chủ</a></li>
+				<li><a href="book?action=bestseller">Sách bán chạy</a></li>
+				<li><a href="book?action=newest">Sách mới</a></li>
+				<li><a href="book?action=priceAsc">Giá thấp đến cao</a></li>
+				<li><a href="book?action=priceDesc">Giá cao đến thấp</a></li>
 			</ul>
 			<div class="search">
 				<form action="book" method="get">

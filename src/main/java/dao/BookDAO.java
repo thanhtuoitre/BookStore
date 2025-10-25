@@ -162,4 +162,82 @@ public class BookDAO {
 		}
 		return list;
 	}
+
+	public List<Book> getBooksSorted(String order, int page, int pageSize) {
+		List<Book> list = new ArrayList<>();
+		int offset = (page - 1) * pageSize;
+		String sql = "SELECT * FROM books ORDER BY price " + order + " LIMIT ? OFFSET ?";
+		try (Connection conn = DriverManager.getConnection(jdbcURL, jdbcUser, jdbcPass);
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, pageSize);
+			ps.setInt(2, offset);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					list.add(new Book(rs.getInt("bookId"), // ✅ Sửa lại đúng tên cột
+							rs.getString("title"), rs.getString("author"), rs.getDouble("price"),
+							rs.getString("imagePath"), rs.getInt("amount")));
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	public List<Book> getNewestBooks() {
+	    return getBooks("SELECT * FROM books ORDER BY bookId DESC LIMIT 10");
+	}
+	// ✅ Hàm dùng chung
+	private List<Book> getBooks(String sql) {
+		List<Book> list = new ArrayList<>();
+		try (Connection conn = DriverManager.getConnection(jdbcURL, jdbcUser, jdbcPass);
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+			while (rs.next()) {
+				list.add(new Book(rs.getInt("bookId"), // ✅ Cũng sửa lại
+						rs.getString("title"), rs.getString("author"), rs.getDouble("price"), rs.getString("imagePath"),
+						rs.getInt("amount")));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	public List<Book> getBooksSortedByField(String field, String order, int page, int pageSize) {
+		List<Book> list = new ArrayList<>();
+		int offset = (page - 1) * pageSize;
+
+		// ⚠️ Chỉ cho phép các cột hợp lệ để tránh SQL Injection
+		if (!field.equals("price") && !field.equals("bookId") && !field.equals("views")) {
+			field = "bookId";
+		}
+		if (!order.equalsIgnoreCase("ASC") && !order.equalsIgnoreCase("DESC")) {
+			order = "DESC";
+		}
+
+		String sql = "SELECT * FROM books ORDER BY " + field + " " + order + " LIMIT ? OFFSET ?";
+
+		try (Connection conn = DriverManager.getConnection(jdbcURL, jdbcUser, jdbcPass);
+			 PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, pageSize);
+			ps.setInt(2, offset);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					list.add(new Book(
+						rs.getInt("bookId"),
+						rs.getString("title"),
+						rs.getString("author"),
+						rs.getDouble("price"),
+						rs.getString("imagePath"),
+						rs.getInt("amount")
+					));
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
 }

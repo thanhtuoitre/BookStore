@@ -39,7 +39,16 @@ public class BookServlet extends HttpServlet {
 				showDetail(req, resp);
 				break;
 			case "search":
-				searchBooks(req, resp); 
+				searchBooks(req, resp);
+				break;
+			case "priceAsc":
+				showPriceAsc(req, resp);
+				break;
+			case "priceDesc":
+				showPriceDesc(req, resp);
+				break;
+			case "newest":
+				showNewest(req, resp);
 				break;
 			default:
 				showList(req, resp);
@@ -49,9 +58,9 @@ public class BookServlet extends HttpServlet {
 			e.printStackTrace();
 			resp.sendRedirect("error.jsp");
 		}
-
 	}
 
+	// ========== CHI TIẾT ==========
 	private void showDetail(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String idStr = req.getParameter("id");
 		if (idStr != null) {
@@ -64,14 +73,14 @@ public class BookServlet extends HttpServlet {
 					return;
 				}
 			} catch (NumberFormatException e) {
-				// ignore -> redirect
+				// ignore
 			}
 		}
 		resp.sendRedirect("book");
 	}
 
+	// ========== DANH SÁCH CHÍNH ==========
 	private void showList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// ✅ Xử lý phân trang
 		int page = 1;
 		int pageSize = 3;
 		String pageParam = req.getParameter("page");
@@ -98,8 +107,8 @@ public class BookServlet extends HttpServlet {
 		req.getRequestDispatcher("index.jsp").forward(req, resp);
 	}
 
+	// ========== TÌM KIẾM ==========
 	private void searchBooks(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
 		String keyword = req.getParameter("keyword");
 		if (keyword == null || keyword.trim().isEmpty()) {
 			resp.sendRedirect("book");
@@ -112,9 +121,90 @@ public class BookServlet extends HttpServlet {
 		req.getRequestDispatcher("index.jsp").forward(req, resp);
 	}
 
+	// ========== SẮP XẾP GIÁ TĂNG ==========
+	private void showPriceAsc(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		int page = 1;
+		int pageSize = 3;
+		String pageParam = req.getParameter("page");
+		if (pageParam != null) {
+			try {
+				page = Integer.parseInt(pageParam);
+				if (page < 1) page = 1;
+			} catch (NumberFormatException e) {
+				page = 1;
+			}
+		}
+
+		List<Book> bookList = bookDAO.getBooksSorted("ASC", page, pageSize);
+		int totalBooks = bookDAO.getTotalBooks();
+		int totalPages = (int) Math.ceil((double) totalBooks / pageSize);
+
+		req.setAttribute("bookList", bookList);
+		req.setAttribute("currentPage", page);
+		req.setAttribute("totalPages", totalPages);
+		req.setAttribute("sort", "priceAsc");
+		req.getRequestDispatcher("index.jsp").forward(req, resp);
+	}
+
+	// ========== SẮP XẾP GIÁ GIẢM ==========
+	private void showPriceDesc(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		int page = 1;
+		int pageSize = 3;
+		String pageParam = req.getParameter("page");
+		if (pageParam != null) {
+			try {
+				page = Integer.parseInt(pageParam);
+				if (page < 1) page = 1;
+			} catch (NumberFormatException e) {
+				page = 1;
+			}
+		}
+
+		List<Book> bookList = bookDAO.getBooksSorted("DESC", page, pageSize);
+		int totalBooks = bookDAO.getTotalBooks();
+		int totalPages = (int) Math.ceil((double) totalBooks / pageSize);
+
+		req.setAttribute("bookList", bookList);
+		req.setAttribute("currentPage", page);
+		req.setAttribute("totalPages", totalPages);
+		req.setAttribute("sort", "priceDesc");
+		req.getRequestDispatcher("index.jsp").forward(req, resp);
+	}
+
+	// ========== SÁCH MỚI ==========
+	private void showNewest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		int page = 1;
+		int pageSize = 3;
+		String pageParam = req.getParameter("page");
+
+		if (pageParam != null) {
+			try {
+				page = Integer.parseInt(pageParam);
+				if (page < 1) page = 1;
+			} catch (NumberFormatException e) {
+				page = 1;
+			}
+		}
+
+		// ✅ Sắp xếp theo bookId DESC (sách mới nhất trước)
+		List<Book> bookList = bookDAO.getBooksSortedByField("bookId", "DESC", page, pageSize);
+
+		int totalBooks = bookDAO.getTotalBooks();
+		int totalPages = (int) Math.ceil((double) totalBooks / pageSize);
+
+		req.setAttribute("bookList", bookList);
+		req.setAttribute("currentPage", page);
+		req.setAttribute("totalPages", totalPages);
+		req.setAttribute("sort", "newest");
+
+		req.getRequestDispatcher("index.jsp").forward(req, resp);
+	}
+
+
+	// ========== SÁCH PHỔ BIẾN ==========
+
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
 		req.setCharacterEncoding("UTF-8");
 		resp.setCharacterEncoding("UTF-8");
 		resp.setContentType("text/html;charset=UTF-8");
@@ -136,7 +226,6 @@ public class BookServlet extends HttpServlet {
 			}
 		}
 
-		// ✅ Sau khi thêm, quay lại trang admin hoặc trang list
 		resp.sendRedirect("book");
 	}
 
@@ -144,12 +233,12 @@ public class BookServlet extends HttpServlet {
 	public void destroy() {
 		super.destroy();
 		try {
-	        com.mysql.cj.jdbc.AbandonedConnectionCleanupThread.checkedShutdown();
-	        java.sql.Driver driver = java.sql.DriverManager.getDriver("jdbc:mysql://localhost:3306/bookstore");
-	        java.sql.DriverManager.deregisterDriver(driver);
-	        System.out.println("✅ JDBC driver & cleanup thread stopped.");
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+			com.mysql.cj.jdbc.AbandonedConnectionCleanupThread.checkedShutdown();
+			java.sql.Driver driver = java.sql.DriverManager.getDriver("jdbc:mysql://localhost:3306/bookstore");
+			java.sql.DriverManager.deregisterDriver(driver);
+			System.out.println("✅ JDBC driver & cleanup thread stopped.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
