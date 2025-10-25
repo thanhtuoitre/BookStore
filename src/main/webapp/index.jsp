@@ -15,7 +15,7 @@
 		<div class="header-top">
 			<div class="logo">
 				<img src="${pageContext.request.contextPath}/assets/img/logo.jpg"
-					alt="Logo"> 
+					alt="Logo">
 				<div class="logo-text">
 					<h2>Bookstore</h2>
 					<span>ACCESSORIES</span>
@@ -23,7 +23,8 @@
 			</div>
 
 			<div class="logo1">
-				<img src="${pageContext.request.contextPath}/assets/img/user.jpg" alt="User">
+				<img src="${pageContext.request.contextPath}/assets/img/user.jpg"
+					alt="User">
 
 				<!-- Nếu chưa đăng nhập -->
 				<c:if test="${empty sessionScope.user}">
@@ -52,8 +53,14 @@
 				<li><a href="#">Giá cao đến thấp</a></li>
 			</ul>
 			<div class="search">
-				<input type="text" placeholder="Tìm sách...">
+				<form action="book" method="get">
+					<input type="hidden" name="action" value="search"> <input
+						type="text" name="keyword" placeholder="Tìm sách..."
+						value="${keyword}">
+					<button type="submit">🔍</button>
+				</form>
 			</div>
+
 		</nav>
 	</header>
 
@@ -61,22 +68,6 @@
 	<main>
 		<!-- Sidebar -->
 		<aside>
-			<ul>
-				<li><label><input type="checkbox"> Sách thiếu
-						nhi</label></li>
-				<li><label><input type="checkbox"> Sách ngoại
-						ngữ</label></li>
-				<li><label><input type="checkbox"> Sách kỹ năng
-						sống</label></li>
-				<li><label><input type="checkbox"> Sách nuôi
-						dạy con</label></li>
-				<li><label><input type="checkbox"> Sách tin học</label></li>
-				<li><label><input type="checkbox"> Sách kinh tế
-						- xã hội</label></li>
-				<li><label><input type="checkbox"> Sách khoa
-						học - công nghệ</label></li>
-			</ul>
-
 			<div class="newsletter">
 				<p>
 					<b>Đăng ký nhận email</b>
@@ -98,10 +89,43 @@
 					</div>
 				</c:forEach>
 			</div>
+			<c:if test="${empty bookList}">
+				<p>
+					Không tìm thấy sách nào với từ khóa "<b>${keyword}</b>"
+				</p>
+			</c:if>
 
 			<div class="pagination">
-				<a href="#">Previous</a> <a href="#">1</a> <a href="#">2</a>
+				<c:choose>
+					<c:when test="${currentPage == 1}">
+						<span class="disabled">Previous</span>
+					</c:when>
+					<c:otherwise>
+						<a href="book?page=${currentPage - 1}">Previous</a>
+					</c:otherwise>
+				</c:choose>
+
+				<c:forEach var="i" begin="1" end="${totalPages}">
+					<c:choose>
+						<c:when test="${i == currentPage}">
+							<span class="active">${i}</span>
+						</c:when>
+						<c:otherwise>
+							<a href="book?page=${i}">${i}</a>
+						</c:otherwise>
+					</c:choose>
+				</c:forEach>
+
+				<c:choose>
+					<c:when test="${currentPage == totalPages}">
+						<span class="disabled">Next</span>
+					</c:when>
+					<c:otherwise>
+						<a href="book?page=${currentPage + 1}">Next</a>
+					</c:otherwise>
+				</c:choose>
 			</div>
+
 		</section>
 	</main>
 

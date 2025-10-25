@@ -11,9 +11,9 @@ import java.util.List;
 import model.Book;
 
 public class BookDAO {
-	private String jdbcURL = "jdbc:mysql://localhost:3306/bookstore?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC";
-	private String jdbcUser = "thanh";
-	private String jdbcPass = "123456";
+	private final String jdbcURL = "jdbc:mysql://localhost:3306/bookstore?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC";
+	private final String jdbcUser = "thanh";
+	private final String jdbcPass = "123456";
 
 	public BookDAO() {
 		try {
@@ -23,7 +23,7 @@ public class BookDAO {
 		}
 	}
 
-	// Lấy danh sách tất cả sách
+	// ✅ Lấy tất cả sách
 	public List<Book> getAllBooks() {
 		List<Book> list = new ArrayList<>();
 		String sql = "SELECT * FROM books";
@@ -32,9 +32,8 @@ public class BookDAO {
 				ResultSet rs = ps.executeQuery()) {
 
 			while (rs.next()) {
-				Book b = new Book(rs.getInt("bookId"), rs.getString("title"), rs.getString("author"),
-						rs.getDouble("price"), rs.getString("imagePath"), rs.getInt("amount"));
-				list.add(b);
+				list.add(new Book(rs.getInt("bookId"), rs.getString("title"), rs.getString("author"),
+						rs.getDouble("price"), rs.getString("imagePath"), rs.getInt("amount")));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -42,7 +41,7 @@ public class BookDAO {
 		return list;
 	}
 
-	// Tìm sách theo ID
+	// ✅ Lấy sách theo ID
 	public Book getBookById(int id) {
 		String sql = "SELECT * FROM books WHERE bookId=?";
 		try (Connection conn = DriverManager.getConnection(jdbcURL, jdbcUser, jdbcPass);
@@ -52,7 +51,7 @@ public class BookDAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					return new Book(rs.getInt("bookId"), rs.getString("title"), rs.getString("author"),
-							rs.getDouble("price"), rs.getString("imagePath"),rs.getInt("amount"));
+							rs.getDouble("price"), rs.getString("imagePath"), rs.getInt("amount"));
 				}
 			}
 		} catch (SQLException e) {
@@ -61,9 +60,9 @@ public class BookDAO {
 		return null;
 	}
 
-	// Thêm sách
+	// ✅ Thêm sách
 	public void addBook(Book book) {
-		String sql = "INSERT INTO books (title, author, price, imagePath) VALUES (?, ?, ?, ?)";
+		String sql = "INSERT INTO books (title, author, price, imagePath, amount) VALUES (?, ?, ?, ?, ?)";
 		try (Connection conn = DriverManager.getConnection(jdbcURL, jdbcUser, jdbcPass);
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -71,13 +70,14 @@ public class BookDAO {
 			ps.setString(2, book.getAuthor());
 			ps.setDouble(3, book.getPrice());
 			ps.setString(4, book.getImagePath());
+			ps.setInt(5, book.getAmount());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
-	// Xóa sách
+	// ✅ Xóa sách
 	public void deleteBook(int id) {
 		String sql = "DELETE FROM books WHERE bookId=?";
 		try (Connection conn = DriverManager.getConnection(jdbcURL, jdbcUser, jdbcPass);
@@ -90,9 +90,9 @@ public class BookDAO {
 		}
 	}
 
-	// Cập nhật sách
+	// ✅ Cập nhật sách
 	public void updateBook(Book book) {
-		String sql = "UPDATE books SET title=?, author=?, price=?, imagePath=? WHERE bookId=?";
+		String sql = "UPDATE books SET title=?, author=?, price=?, imagePath=?, amount=? WHERE bookId=?";
 		try (Connection conn = DriverManager.getConnection(jdbcURL, jdbcUser, jdbcPass);
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -100,10 +100,66 @@ public class BookDAO {
 			ps.setString(2, book.getAuthor());
 			ps.setDouble(3, book.getPrice());
 			ps.setString(4, book.getImagePath());
-			ps.setInt(5, book.getBookId());
+			ps.setInt(5, book.getAmount());
+			ps.setInt(6, book.getBookId());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	// ✅ Lấy danh sách sách theo phân trang
+	public List<Book> getBooksByPage(int page, int pageSize) {
+		List<Book> list = new ArrayList<>();
+		String sql = "SELECT * FROM books LIMIT ? OFFSET ?";
+		try (Connection conn = DriverManager.getConnection(jdbcURL, jdbcUser, jdbcPass);
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setInt(1, pageSize);
+			ps.setInt(2, (page - 1) * pageSize);
+
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				list.add(new Book(rs.getInt("bookId"), rs.getString("title"), rs.getString("author"),
+						rs.getDouble("price"), rs.getString("imagePath"), rs.getInt("amount")));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	// ✅ Tổng số sách
+	public int getTotalBooks() {
+		int count = 0;
+		String sql = "SELECT COUNT(*) FROM books";
+		try (Connection conn = DriverManager.getConnection(jdbcURL, jdbcUser, jdbcPass);
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+			if (rs.next())
+				count = rs.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return count;
+	}
+
+	public List<Book> searchBooksByTitle(String keyword) {
+		List<Book> list = new ArrayList<>();
+		String sql = "SELECT * FROM books WHERE title LIKE ?";
+		try (Connection conn = DriverManager.getConnection(jdbcURL, jdbcUser, jdbcPass);
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setString(1, "%" + keyword + "%");
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				list.add(new Book(rs.getInt("bookId"), rs.getString("title"), rs.getString("author"),
+						rs.getDouble("price"), rs.getString("imagePath"), rs.getInt("amount")));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 }

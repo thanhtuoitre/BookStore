@@ -57,7 +57,7 @@ header {
 	width: 25px;
 	height: 25px;
 	vertical-align: middle
-	}
+}
 
 .logo1 login {
 	text-decoration: none;
@@ -169,8 +169,8 @@ aside ul li {
 	border: 1px solid #ddd;
 	padding: 5px;
 	background: #fff;
-	width: 160px;
-	height: 200px;
+	width: 280px;
+	height: 360px;
 }
 
 .book h4 {
@@ -206,4 +206,30 @@ footer {
 	color: black;
 	font-size: 14px;
 	margin-top: 20px;
+}
+
+.pagination {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+}
+
+
+.pagination a, .pagination span {
+	display: inline-block;
+	padding: 6px 12px;
+	margin: 0 3px;
+	border: 1px solid #ddd;
+	text-decoration: none;
+	color: #333;
+	border-radius: 4px;
+}
+
+.pagination span.active {
+	background-color: #4CAF50;
+	color: white;
+	border: 1px solid #4CAF50;
 }
