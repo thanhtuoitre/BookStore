@@ -1,0 +1,31 @@
+.cart-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 20px;
+}
+
+.cart-table th, .cart-table td {
+	border: 1px solid #ddd;
+	padding: 8px;
+	text-align: center;
+}
+
+.cart-table th {
+	background: #f4f4f4;
+}
+
+.cart-actions a, .cart-aactions button {
+	font-size: 13px;
+	color: blue;
+	text-decoration: none;
+	border: none;
+	background: none;
+	cursor: pointer;
+}
+
+.total {
+	text-align: right;
+	font-size: 18px;
+	font-weight: bold;
+	margin-top: 15px;
+}

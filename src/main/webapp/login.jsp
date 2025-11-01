@@ -105,11 +105,5 @@
 			</form>
 		</div>
 	</main>
-
-	<!-- Footer -->
-	<footer>
-		Bản quyền thuộc nhóm tác giả cuốn sách "Giáo trình Lập trình Java 2"
-	</footer>
-
 </body>
 </html>

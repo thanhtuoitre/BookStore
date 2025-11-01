@@ -7,46 +7,16 @@
 <meta charset="UTF-8">
 <title>Giỏ hàng - Bookstore</title>
 <link rel="stylesheet" href="assets/css/style.css">
-<style>
-.cart-table {
-	width: 100%;
-	border-collapse: collapse;
-	margin-bottom: 20px;
-}
+<link rel="stylesheet" href="assets/css/cart.css">
 
-.cart-table th, .cart-table td {
-	border: 1px solid #ddd;
-	padding: 8px;
-	text-align: center;
-}
-
-.cart-table th {
-	background: #f4f4f4;
-}
-
-.cart-actions a, .cart-actions button {
-	font-size: 13px;
-	color: blue;
-	text-decoration: none;
-	border: none;
-	background: none;
-	cursor: pointer;
-}
-
-.total {
-	text-align: right;
-	font-size: 18px;
-	font-weight: bold;
-	margin-top: 15px;
-}
-</style>
 </head>
 <body>
 
 	<header>
 		<div class="header-top">
 			<div class="logo">
-				<img src="https://img.freepik.com/premium-vector/book-line-art-logo-icon-vector-white-transparent-background-web-use_1119746-162.jpg"
+				<img
+					src="https://img.freepik.com/premium-vector/book-line-art-logo-icon-vector-white-transparent-background-web-use_1119746-162.jpg"
 					alt="Logo">
 				<div class="logo-text">
 					<h2>Bookstore</h2>
@@ -55,7 +25,8 @@
 			</div>
 
 			<div class="logo1">
-				<img src="https://tse2.mm.bing.net/th/id/OIP.0khZCrzBSvpHdgKH3CiJrgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
+				<img
+					src="https://tse2.mm.bing.net/th/id/OIP.0khZCrzBSvpHdgKH3CiJrgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
 					alt="Logo">
 				<c:if test="${empty sessionScope.user}">
 					<a href="login" class="login">Đăng nhập</a>
@@ -74,7 +45,7 @@
 				<li><a href="book">Trang chủ</a></li>
 				<li><a href="cart">Giỏ hàng</a></li>
 			</ul>
-			
+
 		</nav>
 	</header>
 
@@ -105,14 +76,11 @@
 								<td>${c.title}</td>
 								<td>${c.author}</td>
 								<td>${c.price}₫</td>
-								<td>
-									<input type="number" name="amount_${c.cartId}"
-										value="${c.quantity}" min="1" style="width: 50px;">
-								</td>
+								<td><input type="number" name="amount_${c.cartId}"
+									value="${c.quantity}" min="1" style="width: 50px;"></td>
 								<td>${c.price * c.quantity}₫</td>
-								<td class="cart-actions">
-									<a href="cart?action=remove&cartId=${c.cartId}">Xóa</a>
-								</td>
+								<td class="cart-actions"><a
+									href="cart?action=remove&cartId=${c.cartId}">Xóa</a></td>
 							</tr>
 							<c:set var="total" value="${total + (c.price * c.quantity)}" />
 						</c:forEach>
@@ -121,15 +89,17 @@
 					<div class="total">Tổng tiền: ${total} ₫</div>
 
 					<div style="text-align: right; margin-top: 10px;">
-						<button type="submit" name="action" value="update">Cập nhật giỏ hàng</button>
-						<a href="checkout" style="margin-left: 20px; font-weight: bold;">Thanh toán</a>
+						<button type="submit" name="action" value="update">Cập
+							nhật giỏ hàng</button>
+						<a href="checkout" style="margin-left: 20px; font-weight: bold;">Thanh
+							toán</a>
 					</div>
 				</form>
 			</c:if>
 		</section>
 	</main>
 
-	
+
 
 </body>
 </html>
