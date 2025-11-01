@@ -11,17 +11,23 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import dao.BookDAO;
+import dao.CartDAO;
+import dao.UserDAO;
 import model.Book;
+import model.Cart;
+import model.User;
 
 @WebServlet("/adminHome")
 public class AdminHomeServlet extends HttpServlet {
-
 	private static final long serialVersionUID = 1L;
+
 	private BookDAO bookDAO;
+	private UserDAO userDAO;
 
 	@Override
 	public void init() {
 		bookDAO = new BookDAO();
+		userDAO = new UserDAO();
 	}
 
 	@Override
@@ -30,22 +36,24 @@ public class AdminHomeServlet extends HttpServlet {
 		resp.setContentType("text/html;charset=UTF-8");
 		resp.setCharacterEncoding("UTF-8");
 
-		// ==== Kiểm tra session đăng nhập (theo AdminHomeServlet) ====
+		// ==== Kiểm tra đăng nhập ====
 		HttpSession session = req.getSession(false);
-		String user = (session == null) ? null : (String) session.getAttribute("username");
-		if (user == null) {
-			resp.sendRedirect("login"); // quay về trang login nếu chưa đăng nhập
+		User currentUser = (session == null) ? null : (User) session.getAttribute("user");
+
+		if (currentUser == null) {
+			System.out.println(">>> AdminHomeServlet: Chưa đăng nhập, quay về login");
+			resp.sendRedirect("login");
 			return;
 		}
-		// ============================================================
 
 		String action = req.getParameter("action");
-		String idStr = req.getParameter("id");
-
 		if (action == null)
 			action = "list";
 
+		String idStr = req.getParameter("id");
+
 		switch (action) {
+		/* ================= SÁCH ================= */
 		case "create":
 			req.getRequestDispatcher("form.jsp").forward(req, resp);
 			break;
@@ -63,18 +71,34 @@ public class AdminHomeServlet extends HttpServlet {
 			resp.sendRedirect("adminHome");
 			break;
 
-		case "detail":
-			int idDetail = Integer.parseInt(idStr);
-			Book detailBook = bookDAO.getBookById(idDetail);
-			req.setAttribute("book", detailBook);
-			req.getRequestDispatcher("detail.jsp").forward(req, resp);
+		/* ================= NGƯỜI DÙNG ================= */
+		case "createUser":
+			req.getRequestDispatcher("formUser.jsp").forward(req, resp);
 			break;
 
-		default: // list
-			List<Book> bookList = bookDAO.getAllBooks();
-			req.setAttribute("bookList", bookList);
-			req.getRequestDispatcher("adminHome.jsp").forward(req, resp);
+		case "editUser":
+			int idU = Integer.parseInt(idStr);
+			User editUser = userDAO.getUserById(idU);
+			req.setAttribute("user", editUser);
+			req.getRequestDispatcher("formUser.jsp").forward(req, resp);
 			break;
+
+		case "deleteUser":
+			int idDel = Integer.parseInt(idStr);
+			userDAO.deleteUser(idDel);
+			resp.sendRedirect("adminHome");
+			break;
+
+		/* ================= MẶC ĐỊNH ================= */
+		default:
+			List<Book> bookList = bookDAO.getAllBooks();
+			List<User> userList = userDAO.getAllUsers();
+			List<Cart> cartList = new CartDAO().getAllCarts(); // hoặc bỏ nếu bạn không dùng tab giỏ hàng
+
+			req.setAttribute("bookList", bookList);
+			req.setAttribute("userList", userList);
+			req.setAttribute("cartList", cartList);
+			req.getRequestDispatcher("adminHome.jsp").forward(req, resp);
 		}
 	}
 
@@ -83,22 +107,48 @@ public class AdminHomeServlet extends HttpServlet {
 		req.setCharacterEncoding("UTF-8");
 		resp.setContentType("text/html;charset=UTF-8");
 
-		// ==== Kiểm tra session đăng nhập ====
 		HttpSession session = req.getSession(false);
-		String user = (session == null) ? null : (String) session.getAttribute("username");
-		if (user == null) {
+		User currentUser = (session == null) ? null : (User) session.getAttribute("user");
+
+		if (currentUser == null) {
 			resp.sendRedirect("login");
 			return;
 		}
-		// ====================================
 
+		/* ============ XỬ LÝ FORM SÁCH ============ */
+		String formType = req.getParameter("formType"); // để phân biệt form nào gửi lên
+		if (formType != null && formType.equals("user")) {
+			// FORM NGƯỜI DÙNG
+			String idStr = req.getParameter("id");
+			String username = req.getParameter("username");
+			String password = req.getParameter("password");
+			String email = req.getParameter("email");
+			String fullName = req.getParameter("fullName");
+			String role = req.getParameter("role");
+
+			if (idStr == null || idStr.isEmpty()) {
+				// thêm mới
+				User newUser = new User(0, username, password, email, fullName, role);
+				userDAO.addUser(newUser);
+			} else {
+				// cập nhật
+				int id = Integer.parseInt(idStr);
+				User updateUser = new User(id, username, password, email, fullName, role);
+				userDAO.updateUser(updateUser);
+			}
+
+			resp.sendRedirect("adminHome");
+			return;
+		}
+
+		// Nếu không có formType=user → là form sách
 		String idStr = req.getParameter("id");
 		String title = req.getParameter("title");
 		String author = req.getParameter("author");
 		String priceStr = req.getParameter("price");
 		String imagePath = req.getParameter("imagePath");
 		String amountStr = req.getParameter("amount");
-		
+
 		double price = 0.0;
 		if (priceStr != null && !priceStr.isEmpty()) {
 			try {
@@ -107,7 +157,7 @@ public class AdminHomeServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 		}
-		
+
 		int amount = 0;
 		if (amountStr != null && !amountStr.isEmpty()) {
 			try {
@@ -118,11 +168,9 @@ public class AdminHomeServlet extends HttpServlet {
 		}
 
 		if (idStr == null || idStr.isEmpty()) {
-			// Thêm mới
 			Book newBook = new Book(0, title, author, price, imagePath, amount);
 			bookDAO.addBook(newBook);
 		} else {
-			// Cập nhật
 			int id = Integer.parseInt(idStr);
 			Book updateBook = new Book(id, title, author, price, imagePath, amount);
 			bookDAO.updateBook(updateBook);
@@ -130,5 +178,4 @@ public class AdminHomeServlet extends HttpServlet {
 
 		resp.sendRedirect("adminHome");
 	}
-
 }

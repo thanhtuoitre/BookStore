@@ -106,4 +106,48 @@ public class CartDAO {
 			e.printStackTrace();
 		}
 	}
+	
+	// Lấy toàn bộ giỏ hàng của tất cả người dùng (cho admin)
+	public List<Cart> getAllCarts() {
+	    List<Cart> list = new ArrayList<>();
+	    String sql = "SELECT c.cartId, c.userId, c.bookId, c.quantity, c.createdAt, "
+	               + "b.title, b.author, b.price, b.imagePath, "
+	               + "u.username, u.fullName "
+	               + "FROM cart c "
+	               + "JOIN books b ON c.bookId = b.bookId "
+	               + "JOIN users u ON c.userId = u.userId "
+	               + "ORDER BY c.createdAt DESC";
+
+	    try (Connection conn = DriverManager.getConnection(jdbcURL, jdbcUser, jdbcPass);
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+
+	        while (rs.next()) {
+	            Cart c = new Cart();
+	            c.setCartId(rs.getInt("cartId"));
+	            c.setUserId(rs.getInt("userId"));
+	            c.setBookId(rs.getInt("bookId"));
+	            c.setQuantity(rs.getInt("quantity"));
+	            c.setCreatedAt(rs.getTimestamp("createdAt"));
+
+	            // Lấy thông tin sách
+	            c.setTitle(rs.getString("title"));
+	            c.setAuthor(rs.getString("author"));
+	            c.setPrice(rs.getDouble("price"));
+	            c.setImagePath(rs.getString("imagePath"));
+
+	            // Lấy thêm thông tin user
+	            c.setUsername(rs.getString("username"));
+	            c.setFullName(rs.getString("fullName"));
+
+	            list.add(c);
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return list;
+	}
+
 }

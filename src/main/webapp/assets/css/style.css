@@ -22,7 +22,7 @@ body {
 
 /* Header */
 header {
-	border-bottom: 1px solid #ccc;
+	border-bottom: none;
 }
 
 .header-top {
@@ -70,7 +70,7 @@ header {
 	text-align: center;
 	font-size: 20px;
 	font-weight: bold;
-	margin: 0;
+	margin-top: 0;
 }
 
 /* Menu */
@@ -116,7 +116,6 @@ main {
 aside {
 	width: 20%;
 	background: #f7f7f7;
-	border: 1px solid #ddd;
 	padding: 15px;
 }
 
@@ -233,3 +232,74 @@ footer {
 	color: white;
 	border: 1px solid #4CAF50;
 }
+
+.header-top {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px 40px;
+	border-bottom: none;
+	background: #fff;
+}
+
+/* logo trái */
+.logo {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.logo img {
+	width: 55px;
+	height: 55px;
+}
+.logo-text h2 {
+	margin: 0;
+	font-size: 22px;
+}
+.logo-text span {
+	font-size: 12px;
+	color: gray;
+}
+
+/* user + cart phải */
+.header-right {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+/* user box */
+.user-box {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+.user-box img {
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+}
+.user-box a {
+	text-decoration: none;
+	color: black;
+	font-size: 14px;
+}
+
+/* cart box */
+.cart-box a {
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	color: black;
+	font-size: 14px;
+}
+.cart-box img {
+	width: 26px;
+	height: 26px;
+	margin-right: 5px;
+}
+.cart-box a:hover,
+.user-box a:hover {
+	color: #4CAF50;
+}
+

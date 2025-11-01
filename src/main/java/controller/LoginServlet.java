@@ -10,67 +10,73 @@ import javax.servlet.http.*;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    private UserDAO userDAO;
 
-	private UserDAO userDAO;
+    @Override
+    public void init() throws ServletException {
+        userDAO = new UserDAO();
+    }
 
-	@Override
-	public void init() throws ServletException {
-		userDAO = new UserDAO();
-	}
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// Lấy cookie remember
-		Cookie[] cookies = req.getCookies();
-		String remembereduser = null;
+        // Lấy cookie remember user
+        Cookie[] cookies = req.getCookies();
+        String rememberedUser = null;
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if ("remembereduser".equals(c.getName())) {
+                    rememberedUser = c.getValue();
+                    break;
+                }
+            }
+        }
 
-		if (cookies != null) {
-			for (Cookie c : cookies) {
-				if ("remembereduser".equals(c.getName())) {
-					remembereduser = c.getValue();
-					break;
-				}
-			}
-		}
-		req.setAttribute("remembereduser", remembereduser);
-		req.getRequestDispatcher("login.jsp").forward(req, resp);
-	}
+        req.setAttribute("remembereduser", rememberedUser);
+        req.getRequestDispatcher("login.jsp").forward(req, resp);
+    }
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		req.setCharacterEncoding("UTF-8");
-		String username = req.getParameter("username");
-		String password = req.getParameter("password");
-		String remember = req.getParameter("remember");
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
 
-		// check trong DB
-		User user = userDAO.checkLogin(username, password);
-		if (user != null) {
-			// Đăng nhập thành công
-			HttpSession session = req.getSession();
-			session.setAttribute("user", user); // lưu object User
+        req.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html;charset=UTF-8");
 
-			// nhớ tài khoản
-			if ("on".equals(remember)) {
-				Cookie cookie = new Cookie("remembereduser", username);
-				cookie.setMaxAge(60 * 60 * 24 * 7); // 7 ngày
-				resp.addCookie(cookie);
-			} else {
-				Cookie cookie = new Cookie("remembereduser", "");
-				cookie.setMaxAge(0); // xóa cookie
-				resp.addCookie(cookie);
-			}
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        String remember = req.getParameter("remember");
 
-			// điều hướng theo role
-			if ("admin".equalsIgnoreCase(user.getRole())) {
-				resp.sendRedirect("adminHome");
-			} else {
-				resp.sendRedirect("book"); // về trang chủ cho user
-			}
-		} else {
-			req.setAttribute("error", "Sai tên đăng nhập hoặc mật khẩu.");
-			req.getRequestDispatcher("login.jsp").forward(req, resp);
-		}
-	}
+        // ======= KIỂM TRA ĐĂNG NHẬP TRONG DB =======
+        User user = userDAO.checkLogin(username, password);
+
+        if (user != null) {
+            // Đăng nhập thành công
+            HttpSession session = req.getSession();
+            session.setAttribute("user", user); // lưu toàn bộ object User
+
+            System.out.println(">>> Login success: " + username + " | Role = " + user.getRole());
+
+            // === Ghi nhớ tài khoản bằng Cookie ===
+            Cookie cookie = new Cookie("remembereduser",
+                    "on".equals(remember) ? username : "");
+            cookie.setMaxAge("on".equals(remember) ? 60 * 60 * 24 * 7 : 0); // 7 ngày hoặc xóa
+            resp.addCookie(cookie);
+
+            // === Điều hướng theo vai trò ===
+            if (user.getRole() != null && user.getRole().equalsIgnoreCase("admin")) {
+                resp.sendRedirect("adminHome");
+            } else {
+                resp.sendRedirect("book"); // người dùng thường
+            }
+
+        } else {
+            // Sai tài khoản hoặc mật khẩu
+            req.setAttribute("error", "Sai tên đăng nhập hoặc mật khẩu.");
+            req.getRequestDispatcher("login.jsp").forward(req, resp);
+            System.out.println(">>> Login failed for user: " + username);
+        }
+    }
 }

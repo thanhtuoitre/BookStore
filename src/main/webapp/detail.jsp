@@ -96,21 +96,14 @@ return;
 
 					<label for="amount">Số lượng: </label> <input type="number"
 						id="amount" name="amount" value="1" min="1" style="width: 60px;">
-
-					<button type="submit" class="btn" style="background: #4CAF50;">Thêm
+					<br>
+					<button type="submit" class="btn" style="background: #4CAF50;" >Thêm
 						vào giỏ hàng</button>
-				</form>
-
-				<a href="book" class="btn"
+					<a href="book" class="btn"
 					style="background: #2196F3; margin-left: 10px;">Quay lại</a>
-
+				</form>
 			</div>
 		</div>
 	</main>
-
-	<!-- Footer -->
-	<footer> Bản quyền thuộc nhóm tác giả cuốn sách "Giáo trình
-		Lập trình Java 2" </footer>
-
 </body>
 </html>

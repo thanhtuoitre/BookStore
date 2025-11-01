@@ -73,11 +73,8 @@
 			<ul>
 				<li><a href="book">Trang chủ</a></li>
 				<li><a href="cart">Giỏ hàng</a></li>
-				<li><a href="checkout">Thanh toán</a></li>
 			</ul>
-			<div class="search">
-				<input type="text" placeholder="Tìm sách...">
-			</div>
+			
 		</nav>
 	</header>
 
@@ -132,9 +129,7 @@
 		</section>
 	</main>
 
-	<footer>
-		<p>&copy; 2025 Bookstore. All rights reserved.</p>
-	</footer>
+	
 
 </body>
 </html>

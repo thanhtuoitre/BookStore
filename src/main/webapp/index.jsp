@@ -13,6 +13,7 @@
 	<!-- Header -->
 	<header>
 		<div class="header-top">
+			<!-- Logo bên trái -->
 			<div class="logo">
 				<img src="${pageContext.request.contextPath}/assets/img/logo.jpg"
 					alt="Logo">
@@ -22,22 +23,31 @@
 				</div>
 			</div>
 
-			<div class="logo1">
-				<img src="${pageContext.request.contextPath}/assets/img/user.jpg"
-					alt="User">
+			<!-- Khu vực user + giỏ hàng bên phải -->
+			<div class="header-right">
+				<div class="user-box">
+					<img src="${pageContext.request.contextPath}/assets/img/user.jpg"
+						alt="User">
+					<c:choose>
+						<c:when test="${empty sessionScope.user}">
+							<a href="login" class="login">Đăng nhập</a>
+						</c:when>
+						<c:otherwise>
+							<span>Xin chào, <b>${sessionScope.user.fullName}</b></span>
+							<a href="logout" class="login">Đăng xuất</a>
+						</c:otherwise>
+					</c:choose>
+				</div>
 
-				<!-- Nếu chưa đăng nhập -->
-				<c:if test="${empty sessionScope.user}">
-					<a href="login" class="login">Đăng nhập</a>
-				</c:if>
-
-				<!-- Nếu đã đăng nhập -->
-				<c:if test="${not empty sessionScope.user}">
-					<span>Xin chào, <b>${sessionScope.user.fullName}</b></span>
-					<a href="logout" class="login">Đăng xuất</a>
-				</c:if>
+				<div class="cart-box">
+					<a href="cart"> <img
+						src="${pageContext.request.contextPath}/assets/img/cart.jpg"
+						alt="Cart"> <span>Giỏ hàng</span>
+					</a>
+				</div>
 			</div>
 		</div>
+
 
 		<!-- Giới thiệu -->
 		<div class="intro">Website Cửa Hàng Sách với JSP/Servlet</div>

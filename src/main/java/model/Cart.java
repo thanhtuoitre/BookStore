@@ -8,7 +8,9 @@ public class Cart {
 	private int bookId;
 	private int quantity;
 	private Timestamp createdAt;
-	
+	private String username;
+	private String fullName;
+
 	public String getTitle() {
 		return title;
 	}
@@ -42,10 +44,9 @@ public class Cart {
 	}
 
 	private String title;
-    private String author;
-    private double price;
-    private String imagePath;
-
+	private String author;
+	private double price;
+	private String imagePath;
 
 	public Cart() {
 	}
@@ -97,4 +98,21 @@ public class Cart {
 	public void setCreatedAt(Timestamp createdAt) {
 		this.createdAt = createdAt;
 	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+
 }

@@ -20,18 +20,25 @@
 	margin-top: 0;
 }
 
-
-
 .btn {
-	display: inline-block;
-	padding: 8px 16px;
+	border: none;
+	margin-top: 20px;
+	margin-right: 10px;
+	padding: 10px 20px; /* tăng kích thước nút */
+	font-size: 16px; /* chữ to vừa phải */
+	font-weight: bold; /* chữ đậm */
 	background: #4CAF50;
 	color: white;
 	text-decoration: none;
-	border-radius: 4px;
-	margin-right: 10px;
+	border-radius: 6px; /* bo góc nhẹ */
+	cursor: pointer;
+	transition: 0.3s;
 }
 
 .btn:hover {
 	opacity: 0.9;
+}
+
+.book-detail {
+	margin-top: 40px; /* Cách xuống 40px, có thể chỉnh tuỳ ý */
 }
